@@ -19,6 +19,17 @@ A [nushell](https://www.nushell.sh/) plugin to copy text into clipboard or get t
 ~> clipboard paste | echo $in
 ```
 
+* in order to copy tables please convert them to text format like JSON, YAML, ...
+  * you are able to paste them as tables again using `clipboard paste | from json`
+
+```bash
+~> $env | to json | clipboard copy
+~> clipboard paste | from json
+
+~> ps | to json | clipboard copy
+~> clipboard paste | from json
+```
+
 # Installing
 
 * supported features:

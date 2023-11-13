@@ -22,7 +22,7 @@ A [nushell](https://www.nushell.sh/) plugin to copy text into clipboard or get t
 # Installing
 
 * supported features:
-  * use-wayland # will prioritize wayland api but will falls back to X11 protocol on error
+  * **use-wayland**: will prioritize wayland api but will falls back to X11 protocol on error
 
 * using [nupm](https://github.com/nushell/nupm)
 

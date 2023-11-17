@@ -26,7 +26,9 @@ impl nu_plugin::Plugin for Plugin {
     ) -> Result<Value, LabeledError> {
         match name {
             "clipboard copy" => {
-                copy(input);
+                if let Some(err) = copy(input) {
+                    return Err(err);
+                }
                 return Ok(input.to_owned());
             }
             "clipboard paste" => {

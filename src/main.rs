@@ -86,6 +86,7 @@ fn copy(input: &Value) -> Option<LabeledError> {
     }
     None
 }
+
 #[cfg(not(feature = "force-x11"))]
 fn copy(input: &Value) -> Option<LabeledError> {
     let data: String = match input.as_string() {

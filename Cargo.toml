@@ -17,6 +17,6 @@ arboard = { version = "3.2.1" }
 cli-clipboard = "0.4.0"
 
 [features]
-default = ["force-x11"]
+default = []
 force-x11 = []
 use-wayland = ["arboard/wayland-data-control"]

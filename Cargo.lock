@@ -237,6 +237,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "cli-clipboard"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "04087c1d4a2aa259784a563932aee09cbb0869d490775e051096174b070f3e3d"
+dependencies = [
+ "clipboard-win",
+ "objc",
+ "objc-foundation",
+ "objc_id",
+ "wl-clipboard-rs",
+ "x11-clipboard",
+]
+
+[[package]]
 name = "clipboard-win"
 version = "4.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -717,9 +731,9 @@ checksum = "b5e6163cb8c49088c2c36f57875e58ccd8c87c7427f7fbd50ea6710b2f3f2e8f"
 
 [[package]]
 name = "lru"
-version = "0.11.1"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a4a83fb7698b3643a0e34f9ae6f2e8f0178c0fd42f8b59d493aa271ff3a5bf21"
+checksum = "1efa59af2ddfad1854ae27d75009d538d0998b4b2fd47083e743ac1a10e46c60"
 dependencies = [
  "hashbrown",
 ]
@@ -874,9 +888,9 @@ dependencies = [
 
 [[package]]
 name = "nu-engine"
-version = "0.86.0"
+version = "0.87.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9acbad3928305e2de818b7645e68a2fbc5fbf5702bc8770b2a79d55210bd4978"
+checksum = "43e5fb43a39b55c5d4145b2e52d392a44195af5ca11802f7d4ce3cde144edc32"
 dependencies = [
  "nu-glob",
  "nu-path",
@@ -886,15 +900,15 @@ dependencies = [
 
 [[package]]
 name = "nu-glob"
-version = "0.86.0"
+version = "0.87.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2538530fd9f3c91e5da8f0f399afc30aead7dc2beda2d65269113b919300d1a1"
+checksum = "201561ae6833f7a18da64898cee33ec84d9c37e4a2c5d3a21c8c2db39ca7f010"
 
 [[package]]
 name = "nu-path"
-version = "0.86.0"
+version = "0.87.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0c439f9e5057e7eae9ba73c07bf4638277f1614a062b13721b18adc495b47eba"
+checksum = "63a0db97f589e11972f1dbf48beadd647cad7ad16b189be6d8b9192f808ccc6e"
 dependencies = [
  "dirs-next",
  "omnipath",
@@ -903,9 +917,9 @@ dependencies = [
 
 [[package]]
 name = "nu-plugin"
-version = "0.86.0"
+version = "0.87.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "651048a7cccf26b638714b164ab2741c60950e56ea073ff134ca9de4625b5041"
+checksum = "565f26d59d2ecf2fc2e33253f1b6901a8441b080e21e6ddbbd54df59eea5fef5"
 dependencies = [
  "bincode",
  "nu-engine",
@@ -917,9 +931,9 @@ dependencies = [
 
 [[package]]
 name = "nu-protocol"
-version = "0.86.0"
+version = "0.87.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ad8a741da82c712db76fbf58350d0df0fdb1909951570e412397b244002fb0ba"
+checksum = "68287a2bb2fb8e5dbd59b02fbf07eeed8e2e73c1e20a3b002745170dbf566fc7"
 dependencies = [
  "byte-unit",
  "chrono",
@@ -940,9 +954,9 @@ dependencies = [
 
 [[package]]
 name = "nu-system"
-version = "0.86.0"
+version = "0.87.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "98ab30b7f83f582874262fb40c8eff3a52c8309823f89eaba88768da32ff746a"
+checksum = "2fbadfb5282b8e87652031a876df3ba3f359a60fcebf076fe1dd595825929800"
 dependencies = [
  "chrono",
  "libc",
@@ -959,9 +973,9 @@ dependencies = [
 
 [[package]]
 name = "nu-utils"
-version = "0.86.0"
+version = "0.87.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "30d68c39074dad1d59a75a45c75d0ed795adcbb65455347397337907606eb99f"
+checksum = "8874a3d1c92449c1278e485168ac95fe0b690f275d49c031d836dc34c00d9ed2"
 dependencies = [
  "crossterm_winapi",
  "log",
@@ -969,6 +983,7 @@ dependencies = [
  "num-format",
  "strip-ansi-escapes",
  "sys-locale",
+ "unicase",
 ]
 
 [[package]]
@@ -976,6 +991,7 @@ name = "nu_plugin_clipboard"
 version = "0.1.0"
 dependencies = [
  "arboard",
+ "cli-clipboard",
  "nu-plugin",
  "nu-protocol",
 ]
@@ -1574,6 +1590,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "unicase"
+version = "2.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f7d2d4dafb69621809a81864c9c1b864479e1235c0dd4e199924b9742439ed89"
+dependencies = [
+ "version_check",
+]
+
+[[package]]
 name = "unicode-ident"
 version = "1.0.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1942,6 +1967,15 @@ dependencies = [
  "tree_magic_mini",
  "wayland-client",
  "wayland-protocols",
+]
+
+[[package]]
+name = "x11-clipboard"
+version = "0.7.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "980b9aa9226c3b7de8e2adb11bf20124327c054e0e5812d2aac0b5b5a87e7464"
+dependencies = [
+ "x11rb",
 ]
 
 [[package]]

@@ -11,9 +11,12 @@ edition = "2021"
 readme = "README.md"
 
 [dependencies]
-nu-plugin = "0.86.0"
-nu-protocol = { version = "0.86.0", features = ["plugin"] }
+nu-plugin = "0.87.0"
+nu-protocol = { version = "0.87.0", features = ["plugin"] }
 arboard = { version = "3.2.1" }
+cli-clipboard = "0.4.0"
 
 [features]
+default = ["x11"]
+x11 = []
 use-wayland = ["arboard/wayland-data-control"]

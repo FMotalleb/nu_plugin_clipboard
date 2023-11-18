@@ -49,7 +49,7 @@ fn main() {
     nu_plugin::serve_plugin(&mut Plugin {}, nu_plugin::MsgPackSerializer {})
 }
 
-#[cfg(feature = "x11")]
+#[cfg(feature = "force-x11")]
 fn copy(input: &Value) -> Option<LabeledError> {
     use cli_clipboard::ClipboardProvider;
 
@@ -86,7 +86,7 @@ fn copy(input: &Value) -> Option<LabeledError> {
     }
     None
 }
-#[cfg(not(feature = "x11"))]
+#[cfg(not(feature = "force-x11"))]
 fn copy(input: &Value) -> Option<LabeledError> {
     let data: String = match input.as_string() {
         Ok(text) => text,
@@ -118,7 +118,6 @@ fn copy(input: &Value) -> Option<LabeledError> {
     }
     None
 }
-
 fn paste(span: Span) -> Result<Value, LabeledError> {
     let mut clipboard = match Clipboard::new() {
         Ok(clip) => clip,

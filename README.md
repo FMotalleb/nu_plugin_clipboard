@@ -3,7 +3,7 @@
 A [nushell](https://www.nushell.sh/) plugin to copy text into clipboard or get text from it.
 
 * `clipboard copy`: copy a text that's given as input
-  * `--daemon` (`-d`): spawn a daemon that manages clipboard (if copy is not working try using this flag)
+  * `--{disable or enable}-daemon` (`-d`): spawn a daemon that manages clipboard (if copy is not working try using this flag)
 * `clipboard paste`: returns current text value of clipboard
 
 ## Examples

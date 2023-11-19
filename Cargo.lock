@@ -237,20 +237,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "cli-clipboard"
-version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "04087c1d4a2aa259784a563932aee09cbb0869d490775e051096174b070f3e3d"
-dependencies = [
- "clipboard-win",
- "objc",
- "objc-foundation",
- "objc_id",
- "wl-clipboard-rs",
- "x11-clipboard",
-]
-
-[[package]]
 name = "clipboard-win"
 version = "4.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -991,7 +977,6 @@ name = "nu_plugin_clipboard"
 version = "0.1.0"
 dependencies = [
  "arboard",
- "cli-clipboard",
  "nu-plugin",
  "nu-protocol",
 ]
@@ -1967,15 +1952,6 @@ dependencies = [
  "tree_magic_mini",
  "wayland-client",
  "wayland-protocols",
-]
-
-[[package]]
-name = "x11-clipboard"
-version = "0.7.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "980b9aa9226c3b7de8e2adb11bf20124327c054e0e5812d2aac0b5b5a87e7464"
-dependencies = [
- "x11rb",
 ]
 
 [[package]]

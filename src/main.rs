@@ -1,4 +1,6 @@
-use arboard::Clipboard;
+use std::{env, process};
+
+use arboard::{Clipboard, SetExtLinux};
 use nu_plugin::{self, EvaluatedCall, LabeledError};
 use nu_protocol::{Category, PluginSignature, Span, Type, Value};
 
@@ -6,16 +8,35 @@ pub struct Plugin;
 
 impl nu_plugin::Plugin for Plugin {
     fn signature(&self) -> Vec<PluginSignature> {
-        vec![
-            PluginSignature::build("clipboard copy")
-                .usage("copy the input into the clipboard")
-                .input_output_types(vec![(Type::String, Type::String)])
-                .category(Category::Experimental),
+        let mut sig = vec![];
+        if cfg!(target_os = "linux") {
+            sig.push(
+                PluginSignature::build("clipboard copy")
+                    .usage("copy the input into the clipboard")
+                    .switch(
+                        "daemon",
+                        "opens a process in the background that manages the clipboard",
+                        Some('d'),
+                    )
+                    .input_output_types(vec![(Type::String, Type::String)])
+                    .category(Category::Experimental),
+            )
+        } else {
+            sig.push(
+                PluginSignature::build("clipboard copy")
+                    .usage("copy the input into the clipboard")
+                    .input_output_types(vec![(Type::String, Type::String)])
+                    .category(Category::Experimental),
+            )
+        }
+        sig.push(
             PluginSignature::build("clipboard paste")
                 .usage("outputs the current value in clipboard")
                 .input_output_types(vec![(Type::Nothing, Type::String)])
                 .category(Category::Experimental),
-        ]
+        );
+
+        return sig;
     }
 
     fn run(
@@ -26,7 +47,8 @@ impl nu_plugin::Plugin for Plugin {
     ) -> Result<Value, LabeledError> {
         match name {
             "clipboard copy" => {
-                if let Some(err) = copy(input) {
+                if let Some(err) = copy(input, cfg!(target_os = "linux") && call.has_flag("daemon"))
+                {
                     return Err(err);
                 }
                 return Ok(input.to_owned());
@@ -45,50 +67,24 @@ impl nu_plugin::Plugin for Plugin {
         };
     }
 }
+
+#[cfg(target_os = "linux")]
+const DAEMONIZE_ARG: &str = "9020bba4f13c910db6211b87cb667614";
+
 fn main() {
+    #[cfg(target_os = "linux")]
+    if env::args().nth(1).as_deref() == Some(DAEMONIZE_ARG) {
+        let _ = Clipboard::new()
+            .unwrap()
+            .set()
+            .wait()
+            .text(env::args().nth(2).as_deref().unwrap());
+        return;
+    }
     nu_plugin::serve_plugin(&mut Plugin {}, nu_plugin::MsgPackSerializer {})
 }
 
-#[cfg(feature = "force-x11")]
-fn copy(input: &Value) -> Option<LabeledError> {
-    use cli_clipboard::ClipboardProvider;
-
-    let data: String = match input.as_string() {
-        Ok(text) => text,
-        Err(err) => {
-            return Some(LabeledError {
-                label: "input to string conversion error".to_string(),
-                msg: err.to_string(),
-                span: None,
-            })
-        }
-    };
-    let mut clipboard = match cli_clipboard::x11_clipboard::X11ClipboardContext::<
-        cli_clipboard::x11_clipboard::Clipboard,
-    >::new()
-    {
-        Ok(clip) => clip,
-        Err(err) => {
-            return Some(LabeledError {
-                label: "clipboard error".to_string(),
-                msg: err.to_string(),
-                span: None,
-            })
-        }
-    };
-
-    if let Err(err) = clipboard.set_contents(data) {
-        return Some(LabeledError {
-            label: "copy error".to_string(),
-            msg: err.to_string(),
-            span: None,
-        });
-    }
-    None
-}
-
-#[cfg(not(feature = "force-x11"))]
-fn copy(input: &Value) -> Option<LabeledError> {
+fn copy(input: &Value, as_daemon: bool) -> Option<LabeledError> {
     let data: String = match input.as_string() {
         Ok(text) => text,
         Err(err) => {
@@ -109,13 +105,25 @@ fn copy(input: &Value) -> Option<LabeledError> {
             })
         }
     };
-
-    if let Err(err) = clipboard.set_text(data) {
-        return Some(LabeledError {
-            label: "copy error".to_string(),
-            msg: err.to_string(),
-            span: None,
-        });
+    if cfg!(target_os = "linux") && as_daemon {
+        match start_daemon(&data) {
+            Ok(_) => {}
+            Err(err) => {
+                return Some(LabeledError {
+                    label: "daemon initialization exception".to_string(),
+                    msg: err.to_string(),
+                    span: None,
+                });
+            }
+        }
+    } else {
+        if let Err(err) = clipboard.set_text(data) {
+            return Some(LabeledError {
+                label: "copy error".to_string(),
+                msg: err.to_string(),
+                span: None,
+            });
+        }
     }
     None
 }
@@ -137,5 +145,23 @@ fn paste(span: Span) -> Result<Value, LabeledError> {
             msg: err.to_string(),
             span: Some(span),
         }),
+    }
+}
+
+fn start_daemon(data: &String) -> Result<process::Child, std::io::Error> {
+    match env::current_exe() {
+        Ok(exe) => {
+            return process::Command::new(exe)
+                .arg(DAEMONIZE_ARG)
+                .arg(data)
+                .stdin(process::Stdio::null())
+                .stdout(process::Stdio::null())
+                .stderr(process::Stdio::null())
+                .current_dir("/")
+                .spawn();
+        }
+        Err(err) => {
+            return Err(err);
+        }
     }
 }

@@ -10,12 +10,19 @@ impl nu_plugin::Plugin for Plugin {
     fn signature(&self) -> Vec<PluginSignature> {
         let mut sig = vec![];
         if cfg!(target_os = "linux") {
+            let status = match cfg!(feature = "enforce-daemon") {
+                true => "disable",
+                false => "enable",
+            };
             sig.push(
                 PluginSignature::build("clipboard copy")
                     .usage("copy the input into the clipboard")
                     .switch(
                         "daemon",
-                        "opens a process in the background that manages the clipboard",
+                        format!(
+                            "cause copy action to {} the daemon feature (open a process in background), this fixes some errors in some Desktop environments if you are OK without it don't use it",
+                            status
+                        ),
                         Some('d'),
                     )
                     .input_output_types(vec![(Type::String, Type::String)])
@@ -105,7 +112,8 @@ fn copy(input: &Value, as_daemon: bool) -> Option<LabeledError> {
             })
         }
     };
-    if cfg!(target_os = "linux") && as_daemon {
+
+    if cfg!(feature = "enforce-daemon") ^ as_daemon {
         match start_daemon(&data) {
             Ok(_) => {}
             Err(err) => {

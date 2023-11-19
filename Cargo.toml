@@ -18,3 +18,4 @@ arboard = { version = "3.2.1" }
 [features]
 default = []
 use-wayland = ["arboard/wayland-data-control"]
+enforce-daemon = []

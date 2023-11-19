@@ -16,4 +16,6 @@ nu-protocol = { version = "0.87.0", features = ["plugin"] }
 arboard = { version = "3.2.1" }
 
 [features]
+default = []
 use-wayland = ["arboard/wayland-data-control"]
+enforce-daemon = []

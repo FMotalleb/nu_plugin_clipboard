@@ -1,4 +1,4 @@
-use std::{env, process};
+use std::{env, ops::ControlFlow, process};
 
 use arboard::{Clipboard, SetExtLinux};
 use nu_plugin::{self, EvaluatedCall, LabeledError};
@@ -79,16 +79,32 @@ impl nu_plugin::Plugin for Plugin {
 const DAEMONIZE_ARG: &str = "9020bba4f13c910db6211b87cb667614";
 
 fn main() {
-    #[cfg(target_os = "linux")]
-    if env::args().nth(1).as_deref() == Some(DAEMONIZE_ARG) {
-        let _ = Clipboard::new()
-            .unwrap()
-            .set()
-            .wait()
-            .text(env::args().nth(2).as_deref().unwrap());
+    if let ControlFlow::Break(_) = daemon_entry() {
         return;
     }
     nu_plugin::serve_plugin(&mut Plugin {}, nu_plugin::MsgPackSerializer {})
+}
+
+fn daemon_entry() -> ControlFlow<()> {
+    #[cfg(target_os = "linux")]
+    if env::args().nth(1).as_deref() == Some(DAEMONIZE_ARG) {
+        match Clipboard::new() {
+            Ok(mut clip) => {
+                if let Err(err) = clip
+                    .set()
+                    .wait()
+                    .text(env::args().nth(2).as_deref().unwrap_or(""))
+                {
+                    println!("copy exception: {}", err);
+                }
+            }
+            Err(err) => {
+                println!("exception: {}", err);
+            }
+        }
+        return ControlFlow::Break(());
+    }
+    ControlFlow::Continue(())
 }
 
 fn copy(input: &Value, as_daemon: bool) -> Option<LabeledError> {

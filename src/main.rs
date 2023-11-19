@@ -5,23 +5,22 @@ use nu_plugin::{self, EvaluatedCall, LabeledError};
 use nu_protocol::{Category, PluginSignature, Span, Type, Value};
 
 pub struct Plugin;
-
+const DAEMON_FLAG: &str = match cfg!(feature = "enforce-daemon") {
+    true => "disable",
+    false => "enable",
+};
 impl nu_plugin::Plugin for Plugin {
     fn signature(&self) -> Vec<PluginSignature> {
         let mut sig = vec![];
         if cfg!(target_os = "linux") {
-            let status = match cfg!(feature = "enforce-daemon") {
-                true => "disable",
-                false => "enable",
-            };
             sig.push(
                 PluginSignature::build("clipboard copy")
                     .usage("copy the input into the clipboard")
                     .switch(
-                        "daemon",
+                        format!("{}-daemon",DAEMON_FLAG),
                         format!(
                             "cause copy action to {} the daemon feature (open a process in background), this fixes some errors in some Desktop environments if you are OK without it don't use it",
-                            status
+                            DAEMON_FLAG
                         ),
                         Some('d'),
                     )
@@ -54,8 +53,10 @@ impl nu_plugin::Plugin for Plugin {
     ) -> Result<Value, LabeledError> {
         match name {
             "clipboard copy" => {
-                if let Some(err) = copy(input, cfg!(target_os = "linux") && call.has_flag("daemon"))
-                {
+                if let Some(err) = copy(
+                    input,
+                    cfg!(target_os = "linux") && call.has_flag(&format!("{}-daemon", DAEMON_FLAG)),
+                ) {
                     return Err(err);
                 }
                 return Ok(input.to_owned());

@@ -1,0 +1,48 @@
+on:
+    workflow_dispatch:
+    schedule:
+      - cron: '0 0 */2 * *' 
+  
+name: Update dependencies
+  
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+        -   name: Setup Nushell
+            uses: hustcer/setup-nu@main
+            with:
+              version: "*"
+        -   uses: actions/checkout@v2
+        -   name: prepare
+            shell: nu {0}
+            run: |
+                nu -c '
+                  cargo install cargo-edit cargo-upgrades nu_plugin_inc -f
+                '
+        -   name: Update Dependencies
+            shell: nu {0}
+            run: |
+                nu -c '
+                  register /home/runner/.cargo/bin/nu_plugin_inc
+                  cargo upgrade
+                  let changed = git status -s | is-empty | not $in
+                  if ($changed) {
+                    open Cargo.toml 
+                      | upsert package.version ( $in 
+                              | get package.version
+                              | inc --patch
+                          )
+                      | save Cargo.toml -f
+
+                    open package.nuon 
+                      | upsert version ( open Cargo.toml | get package.version )
+                      | save package.nuon -f
+                  }
+                  
+                  echo { "changed": $changed }
+                '
+                
+        -   uses: EndBug/add-and-commit@v9 
+            with:
+                author_name: GitHub-Action

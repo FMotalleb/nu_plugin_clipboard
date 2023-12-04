@@ -38,6 +38,7 @@ jobs:
                     open package.nuon 
                       | upsert version ( open Cargo.toml | get package.version )
                       | save package.nuon -f
+                    cargo upgrade
                   }
                   
                   echo { "changed": $changed }

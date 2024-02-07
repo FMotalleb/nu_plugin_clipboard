@@ -48,16 +48,16 @@ impl nu_plugin::Plugin for Plugin {
     fn run(
         &mut self,
         name: &str,
+        _config: &Option<Value>,
         call: &EvaluatedCall,
         input: &Value,
     ) -> Result<Value, LabeledError> {
         match name {
             "clipboard copy" => {
-                if let Some(err) = copy(
-                    input,
-                    cfg!(target_os = "linux") && call.has_flag(&format!("{}-daemon", DAEMON_FLAG)),
-                ) {
-                    return Err(err);
+                if let Ok(use_daemon) = call.has_flag(&format!("{}-daemon", DAEMON_FLAG)) {
+                    if let Some(err) = copy(input, cfg!(target_os = "linux") && use_daemon) {
+                        return Err(err);
+                    }
                 }
                 return Ok(input.to_owned());
             }

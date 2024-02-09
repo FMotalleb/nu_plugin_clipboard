@@ -1,6 +1,9 @@
 use std::{env, ops::ControlFlow, process};
 
-use arboard::{Clipboard, SetExtLinux};
+use arboard::Clipboard;
+#[cfg(target_os = "linux")]
+use arboard::SetExtLinux;
+
 use nu_plugin::{self, EvaluatedCall, LabeledError};
 use nu_protocol::{Category, PluginSignature, Span, Type, Value};
 
@@ -76,7 +79,6 @@ impl nu_plugin::Plugin for Plugin {
     }
 }
 
-#[cfg(target_os = "linux")]
 const DAEMONIZE_ARG: &str = "9020bba4f13c910db6211b87cb667614";
 
 fn main() {
@@ -130,7 +132,7 @@ fn copy(input: &Value, as_daemon: bool) -> Option<LabeledError> {
         }
     };
 
-    if cfg!(feature = "enforce-daemon") ^ as_daemon {
+    if (cfg!(feature = "enforce-daemon")) ^ as_daemon {
         match start_daemon(&data) {
             Ok(_) => {}
             Err(err) => {

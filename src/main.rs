@@ -111,8 +111,8 @@ fn daemon_entry() -> ControlFlow<()> {
 }
 
 fn copy(input: &Value, as_daemon: bool) -> Option<LabeledError> {
-    let data: String = match input.as_string() {
-        Ok(text) => text,
+    let data: String = match input.as_str() {
+        Ok(text) => text.to_string(),
         Err(err) => {
             return Some(LabeledError {
                 label: "input to string conversion error".to_string(),

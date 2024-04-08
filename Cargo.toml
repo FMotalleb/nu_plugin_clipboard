@@ -13,7 +13,8 @@ readme = "README.md"
 [dependencies]
 nu-plugin = "0.92.1"
 nu-protocol = { version = "0.92.1", features = ["plugin"] }
-arboard = { version = "3.3.0", default_features = false }
+arboard = { version = "3.3.2", default_features = false }
+nu-json = "0.92.1"
 
 [features]
 default = []

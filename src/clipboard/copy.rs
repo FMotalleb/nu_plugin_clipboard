@@ -1,10 +1,15 @@
-use crate::{ClipboardPlugins, DAEMON_FLAG};
+use crate::utils::json;
+use crate::ClipboardPlugins;
 use arboard::{Clipboard, SetExtLinux};
 use nu_plugin::{EngineInterface, EvaluatedCall, PluginCommand};
 use nu_protocol::{Category, ErrorLabel, LabeledError, PipelineData, Signature, Span, Type, Value};
 use std::{env, process};
-pub struct ClipboardCopy;
 
+pub struct ClipboardCopy;
+const DAEMON_FLAG: &str = match cfg!(feature = "enforce-daemon") {
+    true => "disable",
+    false => "enable",
+};
 const DAEMONIZE_ARG: &str = "9020bba4f13c910db6211b87cb667614";
 impl ClipboardCopy {
     pub fn new() -> ClipboardCopy {
@@ -31,6 +36,7 @@ impl ClipboardCopy {
         }
     }
 
+    #[cfg(target_os = "linux")]
     pub fn start_daemon(data: &String) -> Result<process::Child, std::io::Error> {
         return match env::current_exe() {
             Ok(exe) => process::Command::new(exe)
@@ -46,47 +52,78 @@ impl ClipboardCopy {
     }
 
     fn copy(input: &Value, as_daemon: bool, span: Span) -> Option<LabeledError> {
-        match input {
-            Value::String { val, .. } => {
-                return Self::copy_str(val.to_owned(), as_daemon, span);
-            }
-            // Value::Record {val,..}=> {
-            //
-            //     return Self::copy_str(val.to_owned(),as_daemon,span);
-            // }
+        return match input {
+            Value::String { val, .. } => Self::copy_str(val.to_owned(), as_daemon, span),
             _ => {
-                return Some(LabeledError {
-                    msg: "cannot convert input to string".to_string(),
-                    labels: vec![ErrorLabel {
-                        text: "input to string conversion error".to_string(),
-                        span: input.span(),
-                    }],
-                    code: None,
-                    url: None,
-                    help: None,
-                    inner: vec![],
-                });
-            }
-        }
-    }
-
-    fn copy_str(data: String, as_daemon: bool, span: Span) -> Option<LabeledError> {
-        let mut clipboard = match Clipboard::new() {
-            Ok(clip) => clip,
-            Err(err) => {
-                return Some(LabeledError {
-                    msg: err.to_string(),
-                    labels: vec![ErrorLabel {
-                        text: "clipboard error".to_string(),
-                        span,
-                    }],
-                    code: None,
-                    url: None,
-                    help: None,
-                    inner: vec![],
-                })
+                let json_value = json::value_to_json_value(&input);
+                return match json_value {
+                    Ok(json_obj) => {
+                        let json_str = nu_json::to_string_with_indent(&json_obj, 4);
+                        match json_str {
+                            Ok(json_str) => Self::copy_str(json_str, as_daemon, span),
+                            Err(err) => Some(LabeledError {
+                                msg: format!("cannot convert json object to string: {}", err),
+                                labels: vec![ErrorLabel {
+                                    text: "input to string conversion error".to_string(),
+                                    span: input.span(),
+                                }],
+                                code: None,
+                                url: None,
+                                help: None,
+                                inner: vec![],
+                            }),
+                        }
+                    }
+                    Err(err) => Some(LabeledError {
+                        msg: format!("cannot convert input to json object: {}", err),
+                        labels: vec![ErrorLabel {
+                            text: "input to string conversion error".to_string(),
+                            span: input.span(),
+                        }],
+                        code: None,
+                        url: None,
+                        help: None,
+                        inner: vec![],
+                    }),
+                };
             }
         };
+    }
+    fn create_clipboard(span: Span) -> Result<Clipboard, LabeledError> {
+        Clipboard::new().map_err(|err| LabeledError {
+            msg: err.to_string(),
+            labels: vec![ErrorLabel {
+                text: "clipboard error".to_string(),
+                span,
+            }],
+            code: None,
+            url: None,
+            help: None,
+            inner: vec![],
+        })
+    }
+    fn _direct_copy(clip: &mut Clipboard, data: String, span: Span) -> Result<(), LabeledError> {
+        clip.set_text(data).map_err(|err| LabeledError {
+            msg: err.to_string(),
+            labels: vec![ErrorLabel {
+                text: "copy error".to_string(),
+                span,
+            }],
+            code: None,
+            url: None,
+            help: None,
+            inner: vec![],
+        })
+    }
+    #[cfg(target_os = "windows")]
+    fn copy_str(data: String, as_daemon: bool, span: Span) -> Option<LabeledError> {
+        let mut clipboard = Self::create_clipboard(span).ok()?;
+        _direct_copy(clipboard, data).ok()?;
+        None
+    }
+    #[cfg(target_os = "linux")]
+    fn copy_str(data: String, as_daemon: bool, span: Span) -> Option<LabeledError> {
+        let mut clipboard = Self::create_clipboard(span).ok()?;
 
         if (cfg!(feature = "enforce-daemon")) ^ as_daemon {
             match Self::start_daemon(&data) {
@@ -106,19 +143,7 @@ impl ClipboardCopy {
                 }
             }
         } else {
-            if let Err(err) = clipboard.set_text(data) {
-                return Some(LabeledError {
-                    msg: err.to_string(),
-                    labels: vec![ErrorLabel {
-                        text: "copy error".to_string(),
-                        span,
-                    }],
-                    code: None,
-                    url: None,
-                    help: None,
-                    inner: vec![],
-                });
-            }
+            Self::_direct_copy(&mut clipboard, data, span).ok()?;
         }
         None
     }
@@ -142,11 +167,18 @@ impl PluginCommand for ClipboardCopy {
                     ),
                     Some('d'),
                 )
-                .input_output_types(vec![(Type::String, Type::String)])
+                .input_output_types(
+                    vec![
+                        (Type::String, Type::String),
+                        (Type::Record(vec![]), Type::String),
+                        (Type::Table(vec![]), Type::String),
+                        (Type::List(Box::new(Type::Any)), Type::String),
+                    ]
+                )
                 .category(Category::Experimental)
         } else {
             Signature::build("clipboard copy")
-                .input_output_types(vec![(Type::String, Type::String)])
+                // .input_output_types(vec![(Type::String, Type::String)])
                 .category(Category::Experimental)
         }
     }

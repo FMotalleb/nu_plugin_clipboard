@@ -1,6 +1,6 @@
 {
   "name": "nu_plugin_clipboard",
-  "version": "0.91.0",
+  "version": "0.93.0",
   "description": "A nushell plugin to copy text into clipboard or get text from it.",
   "license": "LICENSE",
   "type": "custom"

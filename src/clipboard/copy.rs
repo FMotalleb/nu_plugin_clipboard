@@ -170,8 +170,8 @@ impl PluginCommand for ClipboardCopy {
                 .input_output_types(
                     vec![
                         (Type::String, Type::String),
-                        (Type::Record(vec![]), Type::String),
-                        (Type::Table(vec![]), Type::String),
+                        (Type::Record(Box::new([])), Type::String),
+                        (Type::Table(Box::new([])), Type::String),
                         (Type::List(Box::new(Type::Any)), Type::String),
                     ]
                 )

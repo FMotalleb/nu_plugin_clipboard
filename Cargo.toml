@@ -11,10 +11,10 @@ edition = "2021"
 readme = "README.md"
 
 [dependencies]
-nu-plugin = "0.92.1"
-nu-protocol = { version = "0.92.1", features = ["plugin"] }
+nu-plugin = "0.93.0"
+nu-protocol = { version = "0.93.0", features = ["plugin"] }
 arboard = { version = "3.3.2", default_features = false }
-nu-json = "0.92.1"
+nu-json = "0.93.0"
 
 [features]
 default = []

@@ -1,6 +1,6 @@
 use crate::utils::json;
 use crate::ClipboardPlugins;
-use arboard::{Clipboard, SetExtLinux};
+use arboard::Clipboard;
 use nu_plugin::{EngineInterface, EvaluatedCall, PluginCommand};
 use nu_protocol::{Category, ErrorLabel, LabeledError, PipelineData, Signature, Span, Type, Value};
 use std::{env, process};
@@ -102,6 +102,7 @@ impl ClipboardCopy {
             inner: vec![],
         })
     }
+
     fn _direct_copy(clip: &mut Clipboard, data: String, span: Span) -> Result<(), LabeledError> {
         clip.set_text(data).map_err(|err| LabeledError {
             msg: err.to_string(),
@@ -118,7 +119,7 @@ impl ClipboardCopy {
     #[cfg(target_os = "windows")]
     fn copy_str(data: String, as_daemon: bool, span: Span) -> Option<LabeledError> {
         let mut clipboard = Self::create_clipboard(span).ok()?;
-        _direct_copy(clipboard, data).ok()?;
+        Self::_direct_copy(&mut clipboard, data, span).ok()?;
         None
     }
     #[cfg(target_os = "linux")]
@@ -195,12 +196,18 @@ impl PluginCommand for ClipboardCopy {
         input: PipelineData,
     ) -> Result<PipelineData, LabeledError> {
         let value = &input.into_value(call.head);
-        if let Ok(use_daemon) = call.has_flag(&format!("{}-daemon", DAEMON_FLAG)) {
-            let copy_result = Self::copy(value, cfg!(target_os = "linux") && use_daemon, call.head);
-            if let Some(err) = copy_result {
-                return Err(err);
+        let isDaemon = call.has_flag(&format!("{}-daemon", DAEMON_FLAG));
+        match (isDaemon, value) {
+            (Ok(isDaemon), Ok(value)) => {
+                let copy_result =
+                    Self::copy(value, cfg!(target_os = "linux") && isDaemon, call.head);
+                if let Some(err) = copy_result {
+                    return Err(err);
+                }
+                return Ok(PipelineData::Value(value.to_owned(), None));
             }
+            _ => {}
         }
-        return Ok(PipelineData::Value(value.to_owned(), None));
+        Err(LabeledError::new("Failed to copy"))
     }
 }

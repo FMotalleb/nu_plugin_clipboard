@@ -1,5 +1,6 @@
-use nu_protocol::{ShellError, Value};
+use nu_json::value::ToJson;
 use nu_protocol::ast::PathMember;
+use nu_protocol::{ShellError, Value};
 
 pub fn value_to_json_value(v: &Value) -> Result<nu_json::Value, ShellError> {
     let span = v.span();
@@ -35,10 +36,6 @@ pub fn value_to_json_value(v: &Value) -> Result<nu_json::Value, ShellError> {
                 m.insert(k.clone(), value_to_json_value(v)?);
             }
             nu_json::Value::Object(m)
-        }
-        Value::LazyRecord { val, .. } => {
-            let collected = val.collect()?;
-            value_to_json_value(&collected)?
         }
         Value::Custom { val, .. } => {
             let collected = val.to_base_value(span)?;

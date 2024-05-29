@@ -7,7 +7,7 @@ use crate::ClipboardPlugins;
 pub struct ClipboardPaste;
 
 impl ClipboardPaste {
-    pub fn new() -> ClipboardPaste{
+    pub fn new() -> ClipboardPaste {
         ClipboardPaste {}
     }
 }
@@ -32,22 +32,18 @@ impl PluginCommand for ClipboardPaste {
         &self,
         _plugin: &Self::Plugin,
         _engine: &EngineInterface,
-        call: &EvaluatedCall, 
+        call: &EvaluatedCall,
         _input: PipelineData,
     ) -> Result<PipelineData, LabeledError> {
-        
         let mut clipboard = match Clipboard::new() {
             Ok(clip) => clip,
             Err(err) => {
                 return Err(LabeledError {
-
                     msg: err.to_string(),
-                    labels: vec![
-                        ErrorLabel{
-                            text: "clipboard error".to_string(),
-                            span: call.head,
-                        }
-                    ],
+                    labels: vec![ErrorLabel {
+                        text: "clipboard error".to_string(),
+                        span: call.head,
+                    }],
                     code: None,
                     url: None,
                     help: None,
@@ -56,27 +52,18 @@ impl PluginCommand for ClipboardPaste {
             }
         };
         match clipboard.get_text() {
-            Ok(value) => Ok(
-                PipelineData::Value(
-                    Value::string(value, call.head),
-                    None,
-                ),
-            ),
-            Err(err) => Err(
-                LabeledError {
+            Ok(value) => Ok(PipelineData::Value(Value::string(value, call.head), None)),
+            Err(err) => Err(LabeledError {
                 msg: err.to_string(),
-                    labels: vec![
-                        ErrorLabel{
-                            text: "get clipboard content error".to_string(),
-                            span: call.head,
-                        }
-                    ],
-                    code: None,
-                    url: None,
-                    help: None,
-                    inner: vec![],
-                }
-            ),
+                labels: vec![ErrorLabel {
+                    text: "get clipboard content error".to_string(),
+                    span: call.head,
+                }],
+                code: None,
+                url: None,
+                help: None,
+                inner: vec![],
+            }),
         }
     }
 }

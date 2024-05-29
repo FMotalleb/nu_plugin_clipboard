@@ -925,9 +925,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e5b3d8c4512713c7c9c06fb6e9c6a9ac6c8fd07429eeb548cb7d629f7b076097"
 dependencies = [
  "nu-glob",
- "nu-path 0.94.0",
- "nu-protocol 0.94.0",
- "nu-utils 0.94.0",
+ "nu-path",
+ "nu-protocol",
+ "nu-utils",
 ]
 
 [[package]]
@@ -946,17 +946,6 @@ dependencies = [
  "num-traits",
  "serde",
  "serde_json",
-]
-
-[[package]]
-name = "nu-path"
-version = "0.93.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "79efe5ac6af42907fb7cc498f7c38c9ad4a7fa3168922bc4411f14459067a44f"
-dependencies = [
- "dirs-next",
- "omnipath",
- "pwd",
 ]
 
 [[package]]
@@ -981,7 +970,7 @@ dependencies = [
  "nu-engine",
  "nu-plugin-core",
  "nu-plugin-protocol",
- "nu-protocol 0.94.0",
+ "nu-protocol",
  "thiserror",
 ]
 
@@ -994,7 +983,7 @@ dependencies = [
  "interprocess",
  "log",
  "nu-plugin-protocol",
- "nu-protocol 0.94.0",
+ "nu-protocol",
  "rmp-serde",
  "serde",
  "serde_json",
@@ -1008,35 +997,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "82ea366c4d0631e1b589adacf1789f7ad52f22fda8a3f40a49ab2b6609f68f9a"
 dependencies = [
  "bincode",
- "nu-protocol 0.94.0",
- "nu-utils 0.94.0",
+ "nu-protocol",
+ "nu-utils",
  "semver",
  "serde",
- "typetag",
-]
-
-[[package]]
-name = "nu-protocol"
-version = "0.93.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e4de57dd87e27ffa98ad8b6d7f12608f07827ca1545731059dfa34e3362f4693"
-dependencies = [
- "brotli",
- "byte-unit",
- "chrono",
- "chrono-humanize",
- "fancy-regex",
- "indexmap",
- "lru",
- "miette",
- "nu-path 0.93.0",
- "nu-system 0.93.0",
- "nu-utils 0.93.0",
- "num-format",
- "rmp-serde",
- "serde",
- "serde_json",
- "thiserror",
  "typetag",
 ]
 
@@ -1055,34 +1019,15 @@ dependencies = [
  "lru",
  "miette",
  "nix 0.28.0",
- "nu-path 0.94.0",
- "nu-system 0.94.0",
- "nu-utils 0.94.0",
+ "nu-path",
+ "nu-system",
+ "nu-utils",
  "num-format",
  "os_pipe",
  "rmp-serde",
  "serde",
  "thiserror",
  "typetag",
-]
-
-[[package]]
-name = "nu-system"
-version = "0.93.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5c17de2c65b6b10d503ce02ccbb7fb66de63bd2f24cf717c2aa6ad4a954459fc"
-dependencies = [
- "chrono",
- "libc",
- "libproc",
- "log",
- "mach2",
- "nix 0.28.0",
- "ntapi",
- "once_cell",
- "procfs",
- "sysinfo",
- "windows 0.54.0",
 ]
 
 [[package]]
@@ -1103,23 +1048,6 @@ dependencies = [
  "procfs",
  "sysinfo",
  "windows 0.54.0",
-]
-
-[[package]]
-name = "nu-utils"
-version = "0.93.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7fcfe5ef7f89e30142fee34efeaecdcffa45666cffd17e894fe5d83c430e7fcc"
-dependencies = [
- "crossterm_winapi",
- "log",
- "lscolors",
- "nix 0.28.0",
- "num-format",
- "serde",
- "strip-ansi-escapes",
- "sys-locale",
- "unicase",
 ]
 
 [[package]]
@@ -1146,7 +1074,7 @@ dependencies = [
  "arboard",
  "nu-json",
  "nu-plugin",
- "nu-protocol 0.93.0",
+ "nu-protocol",
 ]
 
 [[package]]

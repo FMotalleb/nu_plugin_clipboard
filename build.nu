@@ -26,6 +26,6 @@ def main [package_file: path] {
     log info $"building plugin using: (ansi blue)($cmd)(ansi reset)"
     nu -c $cmd
     let ext: string = if ($nu.os-info.name == 'windows') { '.exe' } else { '' }
-    plugin add $"($install_root | path join "bin" $name)($ext)"ex
+    plugin add $"($install_root | path join "bin" $name)($ext)"
     log info "do not forget to restart Nushell for the plugin to be fully available!"
 }

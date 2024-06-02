@@ -22,11 +22,7 @@ impl ClipboardCopy {
         #[cfg(target_os = "linux")]
         match Clipboard::new() {
             Ok(mut clip) => {
-                if let Err(err) = clip
-                    .set()
-                    .wait()
-                    .text(env::args().nth(2).as_deref().unwrap_or(""))
-                {
+                if let Err(err) = clip.set().text(env::args().nth(2).as_deref().unwrap_or("")) {
                     println!("copy exception: {}", err);
                 }
             }
@@ -196,11 +192,11 @@ impl PluginCommand for ClipboardCopy {
         input: PipelineData,
     ) -> Result<PipelineData, LabeledError> {
         let value = &input.into_value(call.head);
-        let isDaemon = call.has_flag(&format!("{}-daemon", DAEMON_FLAG));
-        match (isDaemon, value) {
-            (Ok(isDaemon), Ok(value)) => {
+        let is_daemon = call.has_flag(&format!("{}-daemon", DAEMON_FLAG));
+        match (is_daemon, value) {
+            (Ok(is_daemon), Ok(value)) => {
                 let copy_result =
-                    Self::copy(value, cfg!(target_os = "linux") && isDaemon, call.head);
+                    Self::copy(value, cfg!(target_os = "linux") && is_daemon, call.head);
                 if let Some(err) = copy_result {
                     return Err(err);
                 }

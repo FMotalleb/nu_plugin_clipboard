@@ -1,4 +1,3 @@
-use nu_json::value::ToJson;
 use nu_protocol::ast::PathMember;
 use nu_protocol::{ShellError, Value};
 

@@ -1,6 +1,8 @@
 use crate::utils::json;
 use crate::ClipboardPlugins;
 use arboard::Clipboard;
+#[cfg(target_os = "linux")]
+use arboard::SetExtLinux;
 use nu_plugin::{EngineInterface, EvaluatedCall, PluginCommand};
 use nu_protocol::{Category, ErrorLabel, LabeledError, PipelineData, Signature, Span, Type, Value};
 use std::{env, process};
@@ -22,7 +24,12 @@ impl ClipboardCopy {
         #[cfg(target_os = "linux")]
         match Clipboard::new() {
             Ok(mut clip) => {
-                if let Err(err) = clip.set().text(env::args().nth(2).as_deref().unwrap_or("")) {
+                let _ = clip.clear();
+                if let Err(err) = clip
+                    .set()
+                    .wait()
+                    .text(env::args().nth(2).unwrap_or("".to_string()))
+                {
                     println!("copy exception: {}", err);
                 }
             }
@@ -32,7 +39,6 @@ impl ClipboardCopy {
         }
     }
 
-    #[cfg(target_os = "linux")]
     pub fn start_daemon(data: &String) -> Result<process::Child, std::io::Error> {
         return match env::current_exe() {
             Ok(exe) => process::Command::new(exe)
@@ -112,16 +118,13 @@ impl ClipboardCopy {
             inner: vec![],
         })
     }
-    #[cfg(target_os = "windows")]
-    fn copy_str(data: String, as_daemon: bool, span: Span) -> Option<LabeledError> {
-        let mut clipboard = Self::create_clipboard(span).ok()?;
-        Self::_direct_copy(&mut clipboard, data, span).ok()?;
-        None
-    }
-    #[cfg(target_os = "linux")]
-    fn copy_str(data: String, as_daemon: bool, span: Span) -> Option<LabeledError> {
-        let mut clipboard = Self::create_clipboard(span).ok()?;
 
+    fn copy_str(data: String, as_daemon: bool, span: Span) -> Option<LabeledError> {
+        let mut clipboard = Self::create_clipboard(span).ok()?;
+        if cfg!(target_os = "windows") {
+            Self::_direct_copy(&mut clipboard, data, span).ok()?;
+            return None;
+        }
         if (cfg!(feature = "enforce-daemon")) ^ as_daemon {
             match Self::start_daemon(&data) {
                 Ok(_) => {}

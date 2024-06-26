@@ -355,6 +355,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "convert_case"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ec182b0ca2f35d8fc196cf3404988fd8b8c739a4d270ff118a398feb0cbec1ca"
+dependencies = [
+ "unicode-segmentation",
+]
+
+[[package]]
 name = "core-foundation-sys"
 version = "0.8.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -633,9 +642,9 @@ dependencies = [
 
 [[package]]
 name = "interprocess"
-version = "2.1.1"
+version = "2.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "13f2533e1f1a70bec71ea7a85d1c0a4dab141c314035ce76e51a19a2f48be708"
+checksum = "67bafc2f5dbdad79a6d925649758d5472647b416028099f0b829d1b67fdd47d3"
 dependencies = [
  "doctest-file",
  "libc",
@@ -919,10 +928,23 @@ dependencies = [
 ]
 
 [[package]]
-name = "nu-engine"
-version = "0.94.1"
+name = "nu-derive-value"
+version = "0.95.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "22fb3bd460654e011259e834050794f9123a51493663e09aefe5dfb937b408a8"
+checksum = "9724b3754a25b2f8a2a7f1530e0a162fa57a3cadd0b5c3b52f75edcdb2070c09"
+dependencies = [
+ "convert_case",
+ "proc-macro-error",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.52",
+]
+
+[[package]]
+name = "nu-engine"
+version = "0.95.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f5ed7cd7d34dd3e58292eaaa658f4b7342da99e979da54babd50c08d5d6d59e5"
 dependencies = [
  "nu-glob",
  "nu-path",
@@ -932,15 +954,15 @@ dependencies = [
 
 [[package]]
 name = "nu-glob"
-version = "0.94.1"
+version = "0.95.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4bb69b3a1152ec28a2bb35264e93a66b5028f1137e52cf6a29026742b9a46cc3"
+checksum = "acd2879444c53bbfb51a2ab060ae1257fe2c8446e6b2cd8a63c88a4d6a728a7a"
 
 [[package]]
 name = "nu-json"
-version = "0.94.1"
+version = "0.95.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "465b45378c9e0a830ed51fb095c9ae5274c2b7acac27c2e43c9c9eb646478b6f"
+checksum = "2806bb62a0766c52197b960f1c6f03319a9c71ea3ca919733ab15ca36b4e5551"
 dependencies = [
  "linked-hash-map",
  "num-traits",
@@ -950,9 +972,9 @@ dependencies = [
 
 [[package]]
 name = "nu-path"
-version = "0.94.1"
+version = "0.95.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4bdfba442db75e61616d8a017a392301c3619c1dbbe92ee291b4ac0072c3e56d"
+checksum = "6633f681c4c92d86198d91f3a4b212e64a33901ca492dd5529631c8ac7dd6ca9"
 dependencies = [
  "dirs-next",
  "omnipath",
@@ -961,9 +983,9 @@ dependencies = [
 
 [[package]]
 name = "nu-plugin"
-version = "0.94.1"
+version = "0.95.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ac87b13cca366fcf36db31e5e2c66b6ea5a791d161314f4b34f9166604718471"
+checksum = "b7844c84c9319c0dc831bc6d595990dee2ba66aab9d0a0d4d64ab414e6520b0f"
 dependencies = [
  "log",
  "nix 0.28.0",
@@ -976,9 +998,9 @@ dependencies = [
 
 [[package]]
 name = "nu-plugin-core"
-version = "0.94.1"
+version = "0.95.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7be7eb2ad0fbb7d5006211fafa25c421082ff3b098e4395e173386790a7ea1ab"
+checksum = "b400723e072a53a1ddff07f530758b17df97cb8bf632414c547a1ad2c1225ddb"
 dependencies = [
  "interprocess",
  "log",
@@ -992,9 +1014,9 @@ dependencies = [
 
 [[package]]
 name = "nu-plugin-protocol"
-version = "0.94.1"
+version = "0.95.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "49f0da1070ae49e5d203163457e527f7f84380f6a0cfda5d2878181e147692b5"
+checksum = "257069f3d77a7fbe47685deb3a53d2de4a4744f6869a7f977286dbadd8bdb2aa"
 dependencies = [
  "bincode",
  "nu-protocol",
@@ -1006,19 +1028,21 @@ dependencies = [
 
 [[package]]
 name = "nu-protocol"
-version = "0.94.1"
+version = "0.95.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "36e2198a52b43e5f0208bec96de68a72a41f076b2b5b1e5e03b6725441060799"
+checksum = "f83d22636a014d5db9f894db2e53fac656b686a35f1002ecc1b8b46b47474874"
 dependencies = [
  "brotli",
  "byte-unit",
  "chrono",
  "chrono-humanize",
+ "convert_case",
  "fancy-regex",
  "indexmap",
  "lru",
  "miette",
  "nix 0.28.0",
+ "nu-derive-value",
  "nu-path",
  "nu-system",
  "nu-utils",
@@ -1032,9 +1056,9 @@ dependencies = [
 
 [[package]]
 name = "nu-system"
-version = "0.94.1"
+version = "0.95.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b103a4c5abcf6ce9c0e395ed9959486cfd6691f21f8cf128ffd2b35130bd0bb5"
+checksum = "8c5e86b4e9ea84b4b12778a159adbbef5f4346213dcc4e9e58f3c40f5c9865af"
 dependencies = [
  "chrono",
  "itertools",
@@ -1052,9 +1076,9 @@ dependencies = [
 
 [[package]]
 name = "nu-utils"
-version = "0.94.1"
+version = "0.95.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c572ba7a4ee47481f0b011114fbeb25b6171bc194d689c034b410db61d3c6d2c"
+checksum = "bc747ba17d4762480a7569df44b49fb7f465b12b98aaa2a18aab2eeb585df79c"
 dependencies = [
  "crossterm_winapi",
  "log",
@@ -1069,7 +1093,7 @@ dependencies = [
 
 [[package]]
 name = "nu_plugin_clipboard"
-version = "0.94.1"
+version = "0.95.0"
 dependencies = [
  "arboard",
  "nu-json",
@@ -1139,12 +1163,12 @@ checksum = "dd8b5dd2ae5ed71462c540258bedcb51965123ad7e7ccf4b9a8cafaa4a63576d"
 
 [[package]]
 name = "os_pipe"
-version = "1.1.4"
+version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0ae859aa07428ca9a929b936690f8b12dc5f11dd8c6992a18ca93919f28bc177"
+checksum = "29d73ba8daf8fac13b0501d1abeddcfe21ba7401ada61a819144b6c2a4f32209"
 dependencies = [
  "libc",
- "windows-sys 0.48.0",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -1866,6 +1890,12 @@ name = "unicode-linebreak"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3b09c83c3c29d37506a3e260c08c03743a6bb66a9cd432c6934ab501a190571f"
+
+[[package]]
+name = "unicode-segmentation"
+version = "1.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d4c87d22b6e3f4a18d4d40ef354e97c90fcb14dd91d7dc0aa9d8a1172ebf7202"
 
 [[package]]
 name = "unicode-width"

@@ -7,8 +7,8 @@ let messages = {
     "use-wayland" : $"Found (ansi blue)wayland(ansi reset) in env\(`(ansi blue)XDG_SESSION_TYPE(ansi reset)`\): activating `(ansi green)use-wayland(ansi reset)` feature"
 }
 
-def main [package_file: path] {
-    let repo_root = $package_file | path dirname
+def main [package_file: path = nupm.nuon] {
+    let repo_root = (ls -f $package_file | first | get name | path dirname)
     let install_root = $env.NUPM_HOME | path join "plugins"
 
     let name = open ($repo_root | path join "Cargo.toml") | get package.name

@@ -51,12 +51,12 @@ nupm install --path nu_plugin_clipboard -f
 git clone https://github.com/FMotalleb/nu_plugin_clipboard.git
 cd nu_plugin_clipboard
 cargo build -r
-register target/release/nu_plugin_clipboard
+plugin add target/release/nu_plugin_clipboard
 ```
 
 * or using cargo
 
 ```bash
 cargo install nu_plugin_clipboard
-register ~/.cargo/bin/nu_plugin_clipboard
+plugin add ~/.cargo/bin/nu_plugin_clipboard
 ```

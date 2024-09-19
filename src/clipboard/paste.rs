@@ -24,7 +24,7 @@ impl PluginCommand for ClipboardPaste {
             .category(Category::Experimental)
     }
 
-    fn usage(&self) -> &str {
+    fn description(&self) -> &str {
         "outputs the current value in clipboard"
     }
 

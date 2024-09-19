@@ -183,10 +183,6 @@ impl PluginCommand for ClipboardCopy {
         }
     }
 
-    fn usage(&self) -> &str {
-        "copy the input into the clipboard"
-    }
-
     fn run(
         &self,
         _plugin: &Self::Plugin,
@@ -208,5 +204,9 @@ impl PluginCommand for ClipboardCopy {
             _ => {}
         }
         Err(LabeledError::new("Failed to copy"))
+    }
+
+    fn description(&self) -> &str {
+        "copy the input into the clipboard"
     }
 }

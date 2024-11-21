@@ -22,7 +22,14 @@ def main [package_file: path = nupm.nuon] {
             log info $message
         }
     }
-    let cmd = $"cargo install --path ($repo_root) --root ($install_root) --features=($features | str join ",")"
+
+    let channel = $repo_root
+        | path join rust-toolchain.toml
+        | open $in
+        | get toolchain?.channel?
+        | default stable
+
+    let cmd = $"cargo +($channel) install --path ($repo_root) --root ($install_root) --features=($features | str join ",")"
     log info $"building plugin using: (ansi blue)($cmd)(ansi reset)"
     nu -c $cmd
     let ext: string = if ($nu.os-info.name == 'windows') { '.exe' } else { '' }

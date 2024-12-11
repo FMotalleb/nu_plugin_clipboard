@@ -23,11 +23,7 @@ impl PluginCommand for ClipboardPaste {
 
     fn signature(&self) -> nu_protocol::Signature {
         nu_protocol::Signature::build("clipboard paste")
-            .switch(
-                "from-json",
-                "formats input if its in json format",
-                Some('j'),
-            )
+            .switch("raw", "disable json formatting", Some('r'))
             .input_output_types(vec![(Type::Nothing, Type::String)])
             .category(Category::Experimental)
     }
@@ -47,17 +43,17 @@ impl PluginCommand for ClipboardPaste {
         if text.trim().is_empty() {
             return Err(LabeledError::new("Empty clipboard".to_string()));
         }
-        if let Ok(true) = call.has_flag("from-json") {
+        if let Ok(true) = call.has_flag("raw") {
+            Ok(Value::string(text, call.head).into_pipeline_data())
+        } else {
             let value: Result<nu_json::Value, nu_json::Error> = nu_json::from_str(&text);
-            return match value {
+            match value {
                 Ok(value) => Ok(json_to_value(value, call.head)?.into_pipeline_data()),
                 Err(err) => Err(LabeledError::new(format!(
                     "Json Deserializer exception: {}",
                     err.to_string()
                 ))),
-            };
-            // formatter
+            }
         }
-        Ok(Value::string(text, call.head).into_pipeline_data())
     }
 }

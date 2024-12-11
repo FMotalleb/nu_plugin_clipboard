@@ -43,7 +43,7 @@ impl ClipBoardLinux {
     }
     fn copy_with_daemon() -> Result<(), nu_protocol::LabeledError> {
         with_clipboard_instance(|clip: &mut arboard::Clipboard| {
-            let _ = clip.clear();
+            clip.clear()?;
             let args: Vec<String> = env::args().skip(2).collect();
             let data = args.join(" ");
             clip.set().wait().text(data)

@@ -37,8 +37,10 @@ impl PluginCommand for ClipboardPaste {
         call: &EvaluatedCall,
         _input: PipelineData,
     ) -> Result<PipelineData, LabeledError> {
-        create_clipboard()
-            .get_text()
-            .map(|t| Value::string(t, call.head).into_pipeline_data())
+        let text = create_clipboard().get_text()?;
+        if text.trim().is_empty() {
+            return Err(LabeledError::new("Empty clipboard".to_string()));
+        }
+        Ok(Value::string(text, call.head).into_pipeline_data())
     }
 }

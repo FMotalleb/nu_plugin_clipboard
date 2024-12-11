@@ -1,5 +1,5 @@
 use nu_protocol::ast::PathMember;
-use nu_protocol::{ShellError, Value};
+use nu_protocol::{LabeledError, Record, ShellError, Span, Value};
 
 pub fn value_to_json_value(v: &Value) -> Result<nu_json::Value, ShellError> {
     let span = v.span();
@@ -51,4 +51,37 @@ pub fn json_list(input: &[Value]) -> Result<Vec<nu_json::Value>, ShellError> {
     }
 
     Ok(out)
+}
+
+pub fn json_to_value(v: nu_json::Value, span: Span) -> Result<Value, LabeledError> {
+    Ok(match v {
+        nu_json::Value::Null => Value::nothing(span),
+        nu_json::Value::Bool(val) => Value::bool(val, span),
+        nu_json::Value::I64(val) => Value::int(val, span),
+        nu_json::Value::U64(val) => {
+            if val <= i64::MAX as u64 {
+                let val = val as i64;
+                Value::int(val, span)
+            } else {
+                Value::string(format!("{}", val), span)
+            }
+        }
+        nu_json::Value::F64(val) => Value::float(val, span),
+        nu_json::Value::String(val) => Value::string(val, span),
+        nu_json::Value::Array(vec) => {
+            let arr: &mut Vec<Value> = &mut vec![];
+            for jval in vec {
+                arr.push(json_to_value(jval, span)?);
+            }
+            Value::list(arr.to_vec(), span)
+        }
+        nu_json::Value::Object(val) => {
+            let mut rec = Record::new();
+            for (k, v) in val {
+                let value = json_to_value(v, span)?;
+                rec.insert(k.clone(), value);
+            }
+            Value::record(rec, span)
+        }
+    })
 }

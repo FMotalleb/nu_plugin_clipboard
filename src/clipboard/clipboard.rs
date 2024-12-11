@@ -8,7 +8,7 @@ pub enum CheckResult {
     Continue,
     Exit(String, i32),
 }
-
+#[cfg(target_os = "linux")]
 fn no_daemon(config: Option<nu_protocol::Value>) -> Result<bool, Error> {
     match config {
         None => Ok(false),
@@ -24,19 +24,23 @@ fn no_daemon(config: Option<nu_protocol::Value>) -> Result<bool, Error> {
         _ => Ok(true),
     }
 }
-
+#[cfg(target_os = "linux")]
 pub fn create_clipboard(config: Option<nu_protocol::Value>) -> impl Clipboard {
+    crate::clipboard::linux::ClipBoardLinux::new(!no_daemon(config).unwrap_or(false))
+}
+#[cfg(not(target_os = "linux"))]
+pub fn create_clipboard(_: Option<nu_protocol::Value>) -> impl Clipboard {
     #[cfg(target_os = "linux")]
     {
         crate::clipboard::linux::ClipBoardLinux::new(!no_daemon(config).unwrap_or(false))
     }
     #[cfg(target_os = "macos")]
     {
-        crate::clipboard::mac_os::ClipboardMacOs::new()
+        crate::clipboard::mac_os::ClipBoardMacos::new()
     }
     #[cfg(target_os = "windows")]
     {
-        crate::clipboard::windows::ClipboardWindows::new()
+        crate::clipboard::windows::ClipBoardWindows::new()
     }
 }
 

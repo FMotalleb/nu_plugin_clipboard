@@ -1,5 +1,5 @@
-use super::{arboard_provider::with_clipboard_instance, clipboard::Clipboard};
-use nu_protocol::LabeledError;
+use super::clipboard::Clipboard;
+
 pub(crate) struct ClipBoardWindows;
 
 impl ClipBoardWindows {

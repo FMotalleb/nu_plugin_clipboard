@@ -49,8 +49,15 @@ impl PluginCommand for ClipboardPaste {
             let value: Result<nu_json::Value, nu_json::Error> = nu_json::from_str(&text);
             match value {
                 Ok(value) => Ok(json_to_value(value, call.head)?.into_pipeline_data()),
-                Err(err) => Err(LabeledError::new(format!(
-                    "Json Deserializer exception: {}",
+                Err(nu_json::Error::Syntax(_, _, _)) => {
+                    Ok(Value::string(text, call.head).into_pipeline_data())
+                }
+                Err(nu_json::Error::Io(err)) => Err(LabeledError::new(format!(
+                    "Json Deserializer IO exception: {}",
+                    err.to_string()
+                ))),
+                Err(nu_json::Error::FromUtf8(err)) => Err(LabeledError::new(format!(
+                    "Json Deserializer FromUtf8 exception: {}",
                     err.to_string()
                 ))),
             }

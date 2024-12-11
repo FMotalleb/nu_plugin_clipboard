@@ -35,7 +35,10 @@ impl ClipBoardLinux {
                 .spawn()
         }) {
             Ok(Ok(_)) => Ok(()),
-            Err(err) | Ok(Err(err)) => Err(nu_protocol::LabeledError::new(err.to_string())),
+            Err(err) | Ok(Err(err)) => Err(nu_protocol::LabeledError::new(format!(
+                "Failed to spawn daemon process: {}",
+                err.to_string()
+            ))),
         }
     }
     fn copy_with_daemon() -> Result<(), nu_protocol::LabeledError> {

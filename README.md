@@ -43,8 +43,7 @@ nupm install --path nu_plugin_clipboard -f
 
 * supported features:
   * **use-wayland**: will prioritize wayland api but will falls back to X11 protocol on error
-  * **enforce-daemon**: force copy command to spawn a daemon and revert the functionality of `--daemon` flag
-
+  * **enforce-daemon**: Deprecation notice: this method is now always enabled in linux environments
 * or compile manually
 
 ```bash

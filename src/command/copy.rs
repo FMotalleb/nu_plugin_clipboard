@@ -1,0 +1,76 @@
+use crate::clipboard::clipboard::Clipboard;
+use crate::ClipboardPlugins;
+use crate::{clipboard::clipboard::create_clipboard, utils::json};
+use nu_plugin::{EngineInterface, EvaluatedCall, PluginCommand};
+use nu_protocol::{Category, IntoPipelineData, LabeledError, PipelineData, Signature, Type, Value};
+
+pub struct ClipboardCopy;
+
+impl ClipboardCopy {
+    pub fn new() -> ClipboardCopy {
+        ClipboardCopy {}
+    }
+
+    fn copy(input: &Value) -> Result<(), LabeledError> {
+        let text: Result<String, LabeledError> = match input {
+            Value::String { val, .. } => Ok(val.to_owned()),
+            _ => {
+                let json_value = json::value_to_json_value(&input)
+                    .map(|v| nu_json::to_string_with_indent(&v, 4));
+
+                match json_value {
+                    Ok(Ok(text)) => Ok(text.to_owned()), // Return the owned String
+                    Ok(Err(err)) => Err(LabeledError::new(err.to_string())),
+                    Err(err) => Err(LabeledError::new(err.to_string())),
+                }
+            }
+        };
+
+        match text.map(|text| create_clipboard().copy_text(text.as_str())) {
+            Ok(Ok(_)) => Ok(()),
+            Err(err) | Ok(Err(err)) => Err(err),
+        }
+    }
+}
+
+impl PluginCommand for ClipboardCopy {
+    type Plugin = ClipboardPlugins;
+
+    fn name(&self) -> &str {
+        "clipboard copy"
+    }
+
+    fn signature(&self) -> Signature {
+        Signature::build("clipboard copy")
+            .input_output_types(vec![
+                (Type::String, Type::String),
+                (Type::Record(Box::new([])), Type::String),
+                (Type::Table(Box::new([])), Type::String),
+                (Type::List(Box::new(Type::Any)), Type::String),
+            ])
+            .category(Category::Custom("Clipboard Manager".to_string()))
+    }
+
+    fn run(
+        &self,
+        _plugin: &Self::Plugin,
+        _engine: &EngineInterface,
+        call: &EvaluatedCall,
+        input: PipelineData,
+    ) -> Result<PipelineData, LabeledError> {
+        let value = input.into_value(call.head);
+        match value {
+            Ok(value) => {
+                if let Err(err) = Self::copy(&value) {
+                    return Err(err);
+                }
+                Ok(value.into_pipeline_data())
+            }
+            Err(err) => Err(LabeledError::new(err.to_string())),
+        }
+    }
+
+    fn description(&self) -> &str {
+        "copy the input into the clipboard"
+    }
+}

@@ -1,10 +1,7 @@
 use std log
 
 let messages = {
-    "enforce-daemon" : $"Found (ansi blue)($env.XDG_CURRENT_DESKTOP?)(ansi reset) from env\(`(ansi blue)XDG_CURRENT_DESKTOP(ansi reset)`\) activating `(ansi red)enforce-daemon(ansi reset)` mode,
-    this will cause the copy action to (ansi yellow)use daemon mode(ansi reset) without the (ansi green)`--daemon` \(`-d`\)(ansi reset) flag
-    and cause `--daemon` flag to have inverted functionality (ansi red)\(now using -d will disable daemon mode\)(ansi reset)",
-    "use-wayland" : $"Found (ansi blue)wayland(ansi reset) in env\(`(ansi blue)XDG_SESSION_TYPE(ansi reset)`\): activating `(ansi green)use-wayland(ansi reset)` feature"
+   "use-wayland" : $"Found (ansi blue)wayland(ansi reset) in env\(`(ansi blue)XDG_SESSION_TYPE(ansi reset)`\): activating `(ansi green)use-wayland(ansi reset)` feature"
 }
 
 def main [package_file: path = nupm.nuon] {
@@ -13,7 +10,6 @@ def main [package_file: path = nupm.nuon] {
 
     let name = open ($repo_root | path join "Cargo.toml") | get package.name
     let features = [] 
-        | if ($nu.os-info.name == "linux") { $in | append enforce-daemon } else { $in } 
         | if ($nu.os-info.name == "linux" and ($env.XDG_SESSION_TYPE? == "wayland")) {$in | append use-wayland } else { $in }
 
     for feature in $features { 

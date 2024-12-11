@@ -10,20 +10,23 @@ impl ClipboardCopy {
     pub fn new() -> ClipboardCopy {
         ClipboardCopy {}
     }
+    fn format_json(input: &Value) -> Result<String, LabeledError> {
+        let json_value =
+            json::value_to_json_value(&input).map(|v| nu_json::to_string_with_indent(&v, 4));
 
+        match json_value {
+            Ok(Ok(text)) => Ok(text.to_owned()), // Return the owned String
+            Ok(Err(err)) => Err(LabeledError::new(format!(
+                "JSON Serialization Error: {}",
+                err,
+            ))),
+            Err(err) => Err(LabeledError::new(format!("JSON Conversion Error: {}", err))),
+        }
+    }
     fn copy(input: &Value) -> Result<(), LabeledError> {
         let text: Result<String, LabeledError> = match input {
             Value::String { val, .. } => Ok(val.to_owned()),
-            _ => {
-                let json_value = json::value_to_json_value(&input)
-                    .map(|v| nu_json::to_string_with_indent(&v, 4));
-
-                match json_value {
-                    Ok(Ok(text)) => Ok(text.to_owned()), // Return the owned String
-                    Ok(Err(err)) => Err(LabeledError::new(err.to_string())),
-                    Err(err) => Err(LabeledError::new(err.to_string())),
-                }
-            }
+            _ => Self::format_json(input),
         };
 
         match text.map(|text| create_clipboard().copy_text(text.as_str())) {

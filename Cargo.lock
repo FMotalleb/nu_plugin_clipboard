@@ -1037,7 +1037,7 @@ dependencies = [
 
 [[package]]
 name = "nu_plugin_clipboard"
-version = "0.100.0"
+version = "0.100.1"
 dependencies = [
  "arboard",
  "nu-json",

@@ -32,7 +32,7 @@ impl PluginCommand for ClipboardPaste {
 
     fn run(
         &self,
-        plugin: &Self::Plugin,
+        _plugin: &Self::Plugin,
         engine: &EngineInterface,
         call: &EvaluatedCall,
         _input: PipelineData,

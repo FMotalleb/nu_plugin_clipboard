@@ -6,7 +6,7 @@ keywords = ["nushell", "clipboard", "plugin"]
 homepage = "https://github.com/FMotalleb/nu_plugin_clipboard"
 repository = "https://github.com/FMotalleb/nu_plugin_clipboard"
 description = "A nushell plugin to copy text into clipboard or get text from it."
-version = "0.100.0"
+version = "0.100.1"
 edition = "2021"
 readme = "README.md"
 
@@ -19,4 +19,3 @@ nu-json = "0.100.0"
 [features]
 default = []
 use-wayland = ["arboard/wayland-data-control"]
-enforce-daemon = []

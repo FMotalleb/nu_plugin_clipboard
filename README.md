@@ -43,7 +43,7 @@ nupm install --path nu_plugin_clipboard -f
 
 * supported features:
   * **use-wayland**: will prioritize wayland api but will falls back to X11 protocol on error
-  * **enforce-daemon**: Deprecation notice: this method is now always enabled in linux environments
+  * **enforce-daemon**: Deprecation notice: this method is now always enabled in linux environments, to disable this behavior set `$env.config.plugins.clipboard.NO_DAEMON` to `true`, to make it permanent add `$env.config.plugins.clipboard.NO_DAEMON = true` to `config env`
 * or compile manually
 
 ```bash

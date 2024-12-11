@@ -27,7 +27,7 @@ impl nu_plugin::Plugin for ClipboardPlugins {
 }
 
 fn main() -> Result<(), io::Error> {
-    match create_clipboard().pre_execute_check() {
+    match create_clipboard(None).pre_execute_check() {
         CheckResult::Continue => Ok(nu_plugin::serve_plugin(
             &mut ClipboardPlugins {},
             nu_plugin::MsgPackSerializer {},

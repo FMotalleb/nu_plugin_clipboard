@@ -23,13 +23,16 @@ impl ClipboardCopy {
             Err(err) => Err(LabeledError::new(format!("JSON Conversion Error: {}", err))),
         }
     }
-    fn copy(input: &Value) -> Result<(), LabeledError> {
+    fn copy(engine: &EngineInterface, input: &Value) -> Result<(), LabeledError> {
         let text: Result<String, LabeledError> = match input {
             Value::String { val, .. } => Ok(val.to_owned()),
             _ => Self::format_json(input),
         };
 
-        match text.map(|text| create_clipboard().copy_text(text.as_str())) {
+        match text.map(|text| {
+            create_clipboard(engine.get_plugin_config().ok().unwrap_or(None))
+                .copy_text(text.as_str())
+        }) {
             Ok(Ok(_)) => Ok(()),
             Err(err) | Ok(Err(err)) => Err(err),
         }
@@ -57,14 +60,14 @@ impl PluginCommand for ClipboardCopy {
     fn run(
         &self,
         _plugin: &Self::Plugin,
-        _engine: &EngineInterface,
+        engine: &EngineInterface,
         call: &EvaluatedCall,
         input: PipelineData,
     ) -> Result<PipelineData, LabeledError> {
         let value = input.into_value(call.head);
         match value {
             Ok(value) => {
-                if let Err(err) = Self::copy(&value) {
+                if let Err(err) = Self::copy(engine, &value) {
                     return Err(err);
                 }
                 Ok(value.into_pipeline_data())

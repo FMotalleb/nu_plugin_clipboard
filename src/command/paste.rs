@@ -3,6 +3,7 @@ use nu_protocol::{Category, IntoPipelineData, LabeledError, PipelineData, Type, 
 
 use crate::{
     clipboard::clipboard::{create_clipboard, Clipboard},
+    utils::json::json_to_value,
     ClipboardPlugins,
 };
 
@@ -22,6 +23,7 @@ impl PluginCommand for ClipboardPaste {
 
     fn signature(&self) -> nu_protocol::Signature {
         nu_protocol::Signature::build("clipboard paste")
+            .switch("raw", "disable json formatting", Some('r'))
             .input_output_types(vec![(Type::Nothing, Type::String)])
             .category(Category::Experimental)
     }
@@ -41,6 +43,24 @@ impl PluginCommand for ClipboardPaste {
         if text.trim().is_empty() {
             return Err(LabeledError::new("Empty clipboard".to_string()));
         }
-        Ok(Value::string(text, call.head).into_pipeline_data())
+        if let Ok(true) = call.has_flag("raw") {
+            Ok(Value::string(text, call.head).into_pipeline_data())
+        } else {
+            let value: Result<nu_json::Value, nu_json::Error> = nu_json::from_str(&text);
+            match value {
+                Ok(value) => Ok(json_to_value(value, call.head)?.into_pipeline_data()),
+                Err(nu_json::Error::Syntax(_, _, _)) => {
+                    Ok(Value::string(text, call.head).into_pipeline_data())
+                }
+                Err(nu_json::Error::Io(err)) => Err(LabeledError::new(format!(
+                    "Json Deserializer IO exception: {}",
+                    err.to_string()
+                ))),
+                Err(nu_json::Error::FromUtf8(err)) => Err(LabeledError::new(format!(
+                    "Json Deserializer FromUtf8 exception: {}",
+                    err.to_string()
+                ))),
+            }
+        }
     }
 }

@@ -13,11 +13,11 @@ pub fn create_clipboard() -> impl Clipboard {
     }
     #[cfg(target_os = "macos")]
     {
-        crate::clipboard::linux::ClipboardMacOs::new()
+        crate::clipboard::mac_os::ClipboardMacOs::new()
     }
     #[cfg(target_os = "windows")]
     {
-        crate::clipboard::linux::ClipboardWindows::new()
+        crate::clipboard::windows::ClipboardWindows::new()
     }
 }
 

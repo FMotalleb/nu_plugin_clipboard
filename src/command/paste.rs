@@ -32,12 +32,12 @@ impl PluginCommand for ClipboardPaste {
 
     fn run(
         &self,
-        _plugin: &Self::Plugin,
-        _engine: &EngineInterface,
+        plugin: &Self::Plugin,
+        engine: &EngineInterface,
         call: &EvaluatedCall,
         _input: PipelineData,
     ) -> Result<PipelineData, LabeledError> {
-        let text = create_clipboard().get_text()?;
+        let text = create_clipboard(engine.get_plugin_config().ok().unwrap_or(None)).get_text()?;
         if text.trim().is_empty() {
             return Err(LabeledError::new("Empty clipboard".to_string()));
         }

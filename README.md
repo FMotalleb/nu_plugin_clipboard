@@ -3,7 +3,8 @@
 A [nushell](https://www.nushell.sh/) plugin to copy text into clipboard or get text from it.
 
 * `clipboard copy`: copy a text that's given as input
-  * `--{disable or enable}-daemon` (`-d`): spawn a daemon that manages clipboard (if copy is not working try using this flag)
+  * ~`--{disable or enable}-daemon` (`-d`): spawn a daemon that manages clipboard (if copy is not working try using this flag)~
+  * Since version 0.100.1> this method is now always enabled in linux environments, to disable this behavior set `$env.config.plugins.clipboard.NO_DAEMON` to `true`, to make it permanent add `$env.config.plugins.clipboard.NO_DAEMON = true` to `config env`
 * `clipboard paste`: returns current text value of clipboard
 
 ## Examples

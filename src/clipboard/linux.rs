@@ -13,11 +13,11 @@ use arboard::SetExtLinux;
 use nu_protocol::LabeledError;
 
 const DAEMONIZE_ARG: &str = "daemon-copy";
+
 pub(crate) struct ClipBoardLinux {
     pub(crate) use_daemon: bool,
 }
 
-#[cfg(target_os = "linux")]
 impl ClipBoardLinux {
     pub fn new(use_daemon: bool) -> Self {
         Self { use_daemon }

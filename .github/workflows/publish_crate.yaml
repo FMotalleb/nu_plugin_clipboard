@@ -1,11 +1,6 @@
 name: Publish Crate
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - Cargo.tom
   release:
   workflow_dispatch: 
     

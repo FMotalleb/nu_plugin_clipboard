@@ -24,8 +24,8 @@ impl PluginCommand for ClipboardPaste {
     fn signature(&self) -> nu_protocol::Signature {
         nu_protocol::Signature::build("clipboard paste")
             .switch("raw", "disable json formatting", Some('r'))
-            .input_output_types(vec![(Type::Nothing, Type::String)])
-            .category(Category::Experimental)
+            .input_output_types(vec![(Type::Nothing, Type::Any)])
+            .category(Category::System)
     }
 
     fn description(&self) -> &str {

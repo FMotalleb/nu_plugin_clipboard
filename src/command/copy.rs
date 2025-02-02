@@ -48,13 +48,8 @@ impl PluginCommand for ClipboardCopy {
 
     fn signature(&self) -> Signature {
         Signature::build("clipboard copy")
-            .input_output_types(vec![
-                (Type::String, Type::String),
-                (Type::Record(Box::new([])), Type::String),
-                (Type::Table(Box::new([])), Type::String),
-                (Type::List(Box::new(Type::Any)), Type::String),
-            ])
-            .category(Category::Custom("Clipboard Manager".to_string()))
+            .input_output_types(vec![(Type::Any, Type::Any)])
+            .category(Category::System)
     }
 
     fn run(

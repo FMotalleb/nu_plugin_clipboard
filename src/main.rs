@@ -1,8 +1,10 @@
 mod clipboard;
 mod command;
 pub mod utils;
+use std::io;
+#[cfg(target_os = "linux")]
 use std::{
-    io::{self, stderr, stdout, Write},
+    io::{stderr, stdout, Write},
     process::exit,
 };
 
@@ -32,6 +34,7 @@ fn main() -> Result<(), io::Error> {
             &mut ClipboardPlugins {},
             nu_plugin::MsgPackSerializer {},
         )),
+        #[cfg(target_os = "linux")]
         CheckResult::Exit(message, code) => {
             if code != 0 {
                 writeln!(stderr(), "Error ({}): {}", code, message)?;

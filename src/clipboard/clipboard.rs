@@ -1,3 +1,4 @@
+#[cfg(target_os = "linux")]
 use std::io::Error;
 
 use nu_protocol::LabeledError;
@@ -6,6 +7,7 @@ use super::arboard_provider::with_clipboard_instance;
 
 pub enum CheckResult {
     Continue,
+    #[cfg(target_os = "linux")]
     Exit(String, i32),
 }
 #[cfg(target_os = "linux")]

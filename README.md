@@ -1,52 +1,60 @@
-# nu_plugin_clipboard
+# 📋 nu_plugin_clipboard
 
-A [nushell](https://www.nushell.sh/) plugin to copy text into clipboard or get text from it.
+A [nushell](https://www.nushell.sh/) plugin for interacting with the clipboard, allowing you to copy/paste text, objects, and tables.
 
-* `clipboard copy`: copy a text that's given as input
-  * ~`--{disable or enable}-daemon` (`-d`): spawn a daemon that manages clipboard (if copy is not working try using this flag)~
-  * Since version 0.100.1> this method is now always enabled in linux environments, to disable this behavior set `$env.config.plugins.clipboard.NO_DAEMON` to `true`, to make it permanent add `$env.config.plugins.clipboard.NO_DAEMON = true` to `config env`
-* `clipboard paste`: returns current text value of clipboard
+## ✨ Features
 
-## Examples
+- **`clipboard copy`**: Copies input text to the clipboard.
+  - **Daemon Behavior:** Since version **0.100.1**, the daemon is always enabled on Linux. To disable it, set:
+    ```bash
+    $env.config.plugins.clipboard.NO_DAEMON = true
+    ```
+  - To make this setting permanent, add it to your `config env`. (I do not recommend changing this unless needed, please create an issue) 
 
-* to copy a string (ONLY string for now)
+- **`clipboard paste`**: Retrieves the current clipboard content.
 
+## 📌 Usage Examples
+
+### Copying a string (supports only strings for now)
 ```bash
-~> echo "test value" | clipboard copy 
+echo "test value" | clipboard copy 
 ```
 
-* to use a string that is in clipboard
-
+### Using clipboard content
 ```bash
-~> clipboard paste | echo $in
+clipboard paste | echo $in
 ```
 
-* in order to copy tables please convert them to text format like JSON, YAML, ...
-  * you are able to paste them as tables again using `clipboard paste | from json`
+### Copying tables and objects
+- Tables and objects are internally converted to **JSON**.
+- When pasting, `clipboard paste` tries to parse JSON into a table or object.
+- If parsing fails, the content is returned as a string.
 
 ```bash
-~> $env | to json | clipboard copy
-~> clipboard paste | from json
+$env | clipboard copy
+clipboard paste
 
-~> ps | to json | clipboard copy
-~> clipboard paste | from json
+ps | clipboard copy
+clipboard paste
 ```
 
-## Installing
+## 🔧 Installation
 
-* using [nupm](https://github.com/nushell/nupm) **Recommended!**
-  * this way you don't need to mess with features and it will install required features
-
+### 🚀 Recommended: Using [nupm](https://github.com/nushell/nupm)
+This method automatically handles dependencies and features:
 ```bash
 git clone https://github.com/FMotalleb/nu_plugin_clipboard.git
 nupm install --path nu_plugin_clipboard -f
 ```
 
-* supported features:
-  * **use-wayland**: will prioritize wayland api but will falls back to X11 protocol on error
-  * **enforce-daemon**: Deprecation notice: this method is now always enabled in linux environments, to disable this behavior set `$env.config.plugins.clipboard.NO_DAEMON` to `true`, to make it permanent add `$env.config.plugins.clipboard.NO_DAEMON = true` to `config env`
-* or compile manually
+### ⚙️ Supported Features
+- **`use-wayland`**: Prioritizes the Wayland API, but falls back to X11 if needed.
+- **`enforce-daemon`**: _(Deprecated)_ Now always enabled on Linux. Disable with:
+  ```bash
+  $env.config.plugins.clipboard.NO_DAEMON = true
+  ```
 
+### 🛠️ Manual Compilation
 ```bash
 git clone https://github.com/FMotalleb/nu_plugin_clipboard.git
 cd nu_plugin_clipboard
@@ -54,9 +62,16 @@ cargo build -r
 plugin add target/release/nu_plugin_clipboard
 ```
 
-* or using cargo
+### 📦 Install via Cargo (using git)
+```bash
+cargo install --git https://github.com/FMotalleb/nu_plugin_clipboard.git
+plugin add ~/.cargo/bin/nu_plugin_clipboard
+```
 
+### 📦 Install via Cargo (crates.io)
+* Since I live in Iran and crates.io won't let me update my packages like a normal person, most of the time crates.io is outdated.
 ```bash
 cargo install nu_plugin_clipboard
 plugin add ~/.cargo/bin/nu_plugin_clipboard
 ```
+

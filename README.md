@@ -68,7 +68,7 @@ cargo install --git https://github.com/FMotalleb/nu_plugin_clipboard.git
 plugin add ~/.cargo/bin/nu_plugin_clipboard
 ```
 
-### 📦 Install via Cargo (crates.io)
+### 📦 Install via Cargo (crates.io) _Not Recommended_
 * Since I live in Iran and crates.io won't let me update my packages like a normal person, most of the time crates.io is outdated.
 ```bash
 cargo install nu_plugin_clipboard

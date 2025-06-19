@@ -9,9 +9,14 @@ A [nushell](https://www.nushell.sh/) plugin for interacting with the clipboard, 
     ```bash
     $env.config.plugins.clipboard.NO_DAEMON = true
     ```
-  - To make this setting permanent, add it to your `config env`. (I do not recommend changing this unless needed, please create an issue) 
+  - To make this setting permanent, add it to your `config env`.
 
 - **`clipboard paste`**: Retrieves the current clipboard content.
+
+## ⚠️ Important
+
+If you face the error `Error: × Clipboard Error: The clipboard contents were not available in the requested format...` 
+Try disabling the daemon mode, as mentioned in [#20](https://github.com/FMotalleb/nu_plugin_clipboard/issues/20).
 
 ## 📌 Usage Examples
 

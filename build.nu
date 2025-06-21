@@ -2,6 +2,14 @@ use std log
 
 let messages = {
    "use-wayland" : $"Found (ansi blue)wayland(ansi reset) in env\(`(ansi blue)XDG_SESSION_TYPE(ansi reset)`\): activating `(ansi green)use-wayland(ansi reset)` feature"
+   "debug" : $"Debug mode is enabled: activating `(ansi green)debug(ansi reset)` feature"
+}
+def append-feature [active: bool,feature: string] {
+    if $active {
+        $in | append $feature
+    } else {
+        $in
+    }
 }
 
 def main [package_file: path = nupm.nuon] {
@@ -9,9 +17,11 @@ def main [package_file: path = nupm.nuon] {
     let install_root = $env.NUPM_HOME | path join "plugins"
 
     let name = open ($repo_root | path join "Cargo.toml") | get package.name
-    let features = [] 
-        | if ($nu.os-info.name == "linux" and ($env.XDG_SESSION_TYPE? == "wayland")) {$in | append use-wayland } else { $in }
-
+    let debug = (([no,yes] | input list "Enable debug mode") == "yes")
+    let use_wayland = ($nu.os-info.name == "linux" and ($env.XDG_SESSION_TYPE? == "wayland"))
+    let features = []
+        | append-feature $use_wayland use-wayland
+        | append-feature $debug debug
     for feature in $features { 
         let message = $messages | get $feature
         if $message != null {

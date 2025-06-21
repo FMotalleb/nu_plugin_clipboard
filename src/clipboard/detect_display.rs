@@ -35,9 +35,10 @@ impl DisplayServer {
             DisplayServer::X11 => true,
             // Iam not sure about these values, let's assume they do not require a daemon
             DisplayServer::Unknown(srv) => {
-                debug_println!(
-                    "Unknown display server detected, assuming no daemon is needed, please report your display server's name in issue tracker. {}",
-                    srv
+                eprintln!(
+                    "Unknown display server detected, assuming no daemon is needed, please report your display server's name in issue tracker. {}
+If you experience issues with clipboard, follow daemon settings in https://github.com/FMotalleb/nu_plugin_clipboard.",
+                    srv,
                 );
                 false
             }

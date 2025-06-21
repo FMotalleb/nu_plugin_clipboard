@@ -10,32 +10,33 @@ pub enum CheckResult {
     #[cfg(target_os = "linux")]
     Exit(String, i32),
 }
+
 #[cfg(target_os = "linux")]
 fn no_daemon(config: Option<nu_protocol::Value>) -> Result<bool, Error> {
+    use crate::clipboard::detect_display::DisplayServer;
+
     match config {
-        None => Ok(false),
+        None => Ok(!DisplayServer::should_use_daemon()),
         Some(nu_protocol::Value::Record { val, .. }) => {
             return no_daemon(val.get("NO_DAEMON").cloned());
         }
         Some(nu_protocol::Value::Bool { val, .. }) => Ok(val),
         Some(nu_protocol::Value::String { val, .. }) => match val.as_str() {
             "true" | "True" | "1" => Ok(true),
-            _ => Ok(false),
+            _ => Ok(!DisplayServer::should_use_daemon()),
         },
         Some(nu_protocol::Value::Int { val, .. }) => Ok(val == 1),
-        _ => Ok(true),
+        _ => Ok(!DisplayServer::should_use_daemon()),
     }
 }
+
 #[cfg(target_os = "linux")]
 pub fn create_clipboard(config: Option<nu_protocol::Value>) -> impl Clipboard {
     crate::clipboard::linux::ClipBoardLinux::new(!no_daemon(config).unwrap_or(false))
 }
+
 #[cfg(not(target_os = "linux"))]
 pub fn create_clipboard(_: Option<nu_protocol::Value>) -> impl Clipboard {
-    #[cfg(target_os = "linux")]
-    {
-        crate::clipboard::linux::ClipBoardLinux::new(!no_daemon(config).unwrap_or(false))
-    }
     #[cfg(target_os = "macos")]
     {
         crate::clipboard::mac_os::ClipBoardMacos::new()

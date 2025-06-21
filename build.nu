@@ -17,7 +17,7 @@ def main [package_file: path = nupm.nuon] {
     let install_root = $env.NUPM_HOME | path join "plugins"
 
     let name = open ($repo_root | path join "Cargo.toml") | get package.name
-    let debug = (([no,yes] | input list "Enable debug mode") == "yes")
+    let debug = (([no,yes] | input list "Enable debug mode (do not enable unless u wanna debug)") == "yes")
     let use_wayland = ($nu.os-info.name == "linux" and ($env.XDG_SESSION_TYPE? == "wayland"))
     let features = []
         | append-feature $use_wayland use-wayland

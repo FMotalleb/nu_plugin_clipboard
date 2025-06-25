@@ -22,9 +22,11 @@ impl ClipBoardLinux {
     pub fn new(use_daemon: bool) -> Self {
         Self { use_daemon }
     }
+
     fn is_daemon_request() -> bool {
         env::args().nth(1).as_deref() == Some(DAEMONIZE_ARG)
     }
+
     fn request_daemon(&self, text: &str) -> Result<(), nu_protocol::LabeledError> {
         match env::current_exe().map(|exe| spawn_daemon(text, exe)) {
             Ok(res) => res,
@@ -34,6 +36,7 @@ impl ClipBoardLinux {
             ))),
         }
     }
+
     fn copy_with_daemon() -> Result<(), LabeledError> {
         with_clipboard_instance(|clip: &mut arboard::Clipboard| {
             clip.clear()?;

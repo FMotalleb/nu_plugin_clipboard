@@ -3,6 +3,8 @@ pub mod clipboard;
 mod error_mapper;
 
 #[cfg(target_os = "linux")]
+mod detect_display;
+#[cfg(target_os = "linux")]
 pub(crate) mod linux;
 
 #[cfg(target_os = "macos")]

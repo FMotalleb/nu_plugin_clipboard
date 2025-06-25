@@ -17,7 +17,8 @@ edition = "2024"
 readme = "README.md"
 
 [dependencies]
-nu-plugin = "0.105.1"
+nu-plugin = { version = "0.105.1" }
+
 nu-protocol = { version = "0.105.1", features = [
   "plugin",
 ] }

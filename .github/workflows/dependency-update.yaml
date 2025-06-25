@@ -1,0 +1,40 @@
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 */2 * *' 
+  
+name: Update dependencies
+  
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Nushell
+        uses: hustcer/setup-nu@main
+        with:
+          version: "*"
+      - uses: actions/checkout@v2
+      - name: upgrade
+        id: upgrade
+        shell: nu {0}
+        run: |
+          http get https://raw.githubusercontent.com/FMotalleb/nushell_sync_script/refs/heads/main/bump_dependencies.nu
+            | save /tmp/update.nu
+          nu /tmp/update.nu
+      - uses: EndBug/add-and-commit@v9 
+        with:
+          author_name: GitHub-Action
+      - name: Extract Version
+        id: extract_version
+        shell: nu {0}
+        run: |
+          let version = (open Cargo.toml | get package.version | str trim)
+          $"version=($version)" | save --force $env.GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.extract_version.outputs.version }}
+          name: Release v${{ steps.extract_version.outputs.version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

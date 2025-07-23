@@ -1,35 +1,34 @@
 [package]
 name = "nu_plugin_clipboard"
 license = "MIT"
-authors = [
-  "Motalleb Fallahnezhad <fmotalleb@gmail.com>",
-]
+authors = ["Motalleb Fallahnezhad <fmotalleb@gmail.com>"]
 keywords = [
-  "nushell",
-  "clipboard",
-  "plugin",
+    "nushell",
+    "clipboard",
+    "plugin",
 ]
 homepage = "https://github.com/FMotalleb/nu_plugin_clipboard"
 repository = "https://github.com/FMotalleb/nu_plugin_clipboard"
 description = "A nushell plugin to copy text into clipboard or get text from it."
-version = "0.105.2"
+version = "0.106.0"
 edition = "2024"
 readme = "README.md"
 
-[dependencies]
-nu-plugin = { version = "0.105.1" }
+[dependencies.nu-plugin]
+version = "0.106.0"
 
-nu-protocol = { version = "0.105.1", features = [
-  "plugin",
-] }
-arboard = { version = "3.5.0", default-features = false }
-nu-json = "0.105.1"
+[dependencies.nu-protocol]
+version = "0.106.0"
+features = ["plugin"]
+
+[dependencies.arboard]
+version = "3.5.0"
+default-features = false
+
+[dependencies.nu-json]
+version = "0.106.0"
 
 [features]
-default = [
-]
-use-wayland = [
-  "arboard/wayland-data-control",
-]
-debug = [
-]
+default = []
+use-wayland = ["arboard/wayland-data-control"]
+debug = []

@@ -5,9 +5,10 @@ A [nushell](https://www.nushell.sh/) plugin for interacting with the clipboard, 
 ## ✨ Features
 
 - **`clipboard copy`**: Copies input text to the clipboard.
-  - **Daemon Behavior:** Since version **0.105.2**, using env variables will try to detect display server.
-    This config will override this behavior, if you need to override this please report and issue:
-
+  - **Daemon Mode** (Linux only): Since version **0.105.2**, using env variables will try to detect display server.
+    If there is any issue with copy/paste command
+    This config will override this behavior. If you need to override this, please file an issue:
+    
     ```bash
     $env.config.plugins.clipboard.NO_DAEMON = true
     ```
@@ -23,16 +24,16 @@ Try disabling the daemon mode, as mentioned in [#20](https://github.com/FMotalle
 
 ## 📌 Usage Examples
 
-### Copying a string (supports only strings for now)
+### Copying a string
 
 ```bash
-echo "test value" | clipboard copy 
+"test value" | clipboard copy 
 ```
 
 ### Using clipboard content
 
 ```bash
-clipboard paste | echo $in
+clipboard paste
 ```
 
 ### Copying tables and objects
@@ -63,11 +64,6 @@ nupm install --path nu_plugin_clipboard -f
 ### ⚙️ Supported Features
 
 - **`use-wayland`**: Prioritizes the Wayland API, but falls back to X11 if needed.
-- **`enforce-daemon`**: _(Deprecated)_ Now always enabled on Linux. Disable with:
-
-  ```bash
-  $env.config.plugins.clipboard.NO_DAEMON = true
-  ```
 
 ### 🛠️ Manual Compilation
 

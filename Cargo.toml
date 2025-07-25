@@ -1,9 +1,7 @@
 [package]
 name = "nu_plugin_clipboard"
 license = "MIT"
-authors = [
-    "Motalleb Fallahnezhad <fmotalleb@gmail.com>",
-]
+authors = ["Motalleb Fallahnezhad <fmotalleb@gmail.com>"]
 keywords = [
     "nushell",
     "clipboard",
@@ -21,9 +19,7 @@ version = "0.106.0"
 
 [dependencies.nu-protocol]
 version = "0.106.0"
-features = [
-    "plugin",
-]
+features = ["plugin"]
 
 [dependencies.arboard]
 version = "3.6.0"
@@ -33,10 +29,6 @@ default-features = false
 version = "0.106.0"
 
 [features]
-default = [
-]
-use-wayland = [
-    "arboard/wayland-data-control",
-]
-debug = [
-]
+default = []
+use-wayland = ["arboard/wayland-data-control"]
+debug = []

@@ -10,15 +10,15 @@ keywords = [
 homepage = "https://github.com/FMotalleb/nu_plugin_clipboard"
 repository = "https://github.com/FMotalleb/nu_plugin_clipboard"
 description = "A nushell plugin to copy text into clipboard or get text from it."
-version = "0.106.0"
+version = "0.106.1"
 edition = "2024"
 readme = "README.md"
 
 [dependencies.nu-plugin]
-version = "0.106.0"
+version = "0.106.1"
 
 [dependencies.nu-protocol]
-version = "0.106.0"
+version = "0.106.1"
 features = ["plugin"]
 
 [dependencies.arboard]
@@ -26,7 +26,7 @@ version = "3.6.0"
 default-features = false
 
 [dependencies.nu-json]
-version = "0.106.0"
+version = "0.106.1"
 
 [features]
 default = []

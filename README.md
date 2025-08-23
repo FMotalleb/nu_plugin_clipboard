@@ -17,10 +17,16 @@ A [nushell](https://www.nushell.sh/) plugin for interacting with the clipboard, 
 
 - **`clipboard paste`**: Retrieves the current clipboard content.
 
-## ⚠️ Important
+## ⚠️ Important (Common issue workaround)
 
-If you face the error `Error: × Clipboard Error: The clipboard contents were not available in the requested format...`
-Try disabling the daemon mode, as mentioned in [#20](https://github.com/FMotalleb/nu_plugin_clipboard/issues/20).
+If you encounter the error:
+`Error: × Clipboard Error: The clipboard contents were not available in the requested format...` on Linux:
+
+* For users running **Wayland** without the `nupm` installer, enable the `use-wayland` feature as described in [#21](https://github.com/FMotalleb/nu_plugin_clipboard/issues/21).
+* Alternatively, try disabling **daemon mode**, as explained in [#20](https://github.com/FMotalleb/nu_plugin_clipboard/issues/20).
+
+Note: These issues are already fixed internally. If you still need to rely on these workarounds, please open a new issue.
+
 
 ## 📌 Usage Examples
 
